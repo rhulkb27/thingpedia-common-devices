@@ -951,7 +951,7 @@ module.exports = class SpotifyDevice extends Tp.BaseDevice {
         const [deviceId, deviceName] = await this._findActiveDevice(devices);
         if (deviceId === null)
             throwError('no_active_device');
-
+        console.log("USING THIS");
         if (this.spotifyd && this.engine.audio) {
             await this.engine.audio.requestAudio(this, async () => {
                 console.log("stopping audio");
@@ -959,6 +959,15 @@ module.exports = class SpotifyDevice extends Tp.BaseDevice {
                     device_id: deviceId
                 });
                 await this.http_put_default_options(pauseURL, '');
+            }, async () => {
+                console.log("pausing audio");
+                let pauseURL = PAUSE_URL + querystring.stringify({
+                    device_id: deviceId
+                });
+                await this.http_put_default_options(pauseURL, '');
+            }, async () => {
+                console.log("resuming audio");
+                await this.http_put(PLAY_URL + `?device_id=${deviceId}`, '', options);
             });
         }
 
